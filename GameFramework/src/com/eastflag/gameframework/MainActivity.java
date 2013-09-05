@@ -15,8 +15,8 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		//setContentView(R.layout.activity_main);
-		//setContentView(new MyView(this));
-		setContentView(new GameView(this));
+		//setContentView(new MyView(this));  //한장의 그림과 같음
+		setContentView(new GameView(this));  //영화와 같음.
 	}
 
 	@Override
