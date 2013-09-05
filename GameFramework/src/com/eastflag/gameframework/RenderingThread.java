@@ -37,7 +37,7 @@ public class RenderingThread extends Thread {
 			mSurfaceHolder.unlockCanvasAndPost(canvas);
 			
 			deltaTime = System.currentTimeMillis() - currTime;
-			Log.d("ldk", "deltaTime:" + deltaTime);
+			Log.d("ldk", "deltaTime:" + deltaTime); 
 		}
 
 	}
