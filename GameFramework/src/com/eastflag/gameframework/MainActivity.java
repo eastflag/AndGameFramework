@@ -6,10 +6,15 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 
 public class MainActivity extends Activity {
+	
+	//public static MainActivity mMainActivity;
+	public int a = 1;
+	AppDirector mAppDirector;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +22,9 @@ public class MainActivity extends Activity {
 		//setContentView(R.layout.activity_main);
 		//setContentView(new MyView(this));  //한장의 그림과 같음
 		setContentView(new GameView(this));  //영화와 같음.
+		
+		Log.d("ldk", "AppDirector 메모리 주소값:" + AppDirector.getInstance());
+		Log.d("ldk", "AppDirector 메모리 주소값:" + AppDirector.getInstance());
 	}
 
 	@Override
@@ -45,5 +53,4 @@ class MyView extends View {
 		canvas.drawCircle(200, 200, 100, paint);
 		super.onDraw(canvas);
 	}
-	
 }

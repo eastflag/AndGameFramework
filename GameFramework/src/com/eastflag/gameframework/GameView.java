@@ -24,6 +24,7 @@ public class GameView extends SurfaceView implements Callback{
 		
 		//페인트 색 정의
 		mPaint = new Paint();
+		mPaint.setTextSize(30);
 		mPaint.setColor(Color.WHITE);
 	}
 
@@ -42,6 +43,16 @@ public class GameView extends SurfaceView implements Callback{
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		mRenderingThread.setRunning(false);
+		
+		boolean retry  = true;
+		while(retry){
+		try {
+			mRenderingThread.join();   //쓰레드를 정지
+			retry = false;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}  
+		}
 	}
 	
 	//3. 필름의 상태 업데이트
@@ -57,6 +68,16 @@ public class GameView extends SurfaceView implements Callback{
 		//canvas.drawCircle(200, 200, 100, mPaint);
 		//ToDo (숙제) : 100, 100에 deltaTime, 100, 200에 FPS 찍기
 		//힌트 :  drawText 와 위에 선언된 mPaint 이용
+		long deltaTime = AppDirector.getInstance().getmDeltaTime();
+		try {
+			canvas.drawText("deltaTime: " + deltaTime, 100, 100, mPaint);
+			canvas.drawText("FPS: " + 1000f / deltaTime, 100, 200, mPaint);
+		} catch (ArithmeticException e) {
+
+		} catch (Exception e) {
+
+		}
+
 	}
 
 }

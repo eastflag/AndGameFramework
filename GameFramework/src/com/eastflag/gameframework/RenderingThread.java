@@ -10,7 +10,7 @@ public class RenderingThread extends Thread {
 	private GameView mGameView;
 	private SurfaceHolder mSurfaceHolder;
 	
-	public static long deltaTime;
+	private  long deltaTime = 1;
 
 	public RenderingThread(GameView gameView, SurfaceHolder mSurfaceHolder) {
 		mGameView = gameView;
@@ -26,18 +26,24 @@ public class RenderingThread extends Thread {
 		long currTime = 0;
 		while(mIsRunning){
 			currTime = System.currentTimeMillis();
-			//도화지를 정지시키고 그림그리기
-			canvas = mSurfaceHolder.lockCanvas();
-			//update
-			mGameView.update();
-			
-			//present
-			mGameView.present(canvas);
-			//도화지를 떼내서 필름에 갖다 붙이기
-			mSurfaceHolder.unlockCanvasAndPost(canvas);
+			try {
+				// 도화지를 정지시키고 그림그리기
+				canvas = mSurfaceHolder.lockCanvas();
+				// update
+				mGameView.update();
+
+				// present
+				mGameView.present(canvas);
+				// 도화지를 떼내서 필름에 갖다 붙이기
+			} catch (Exception e) {
+
+			} finally {
+				mSurfaceHolder.unlockCanvasAndPost(canvas);
+			}
 			
 			deltaTime = System.currentTimeMillis() - currTime;
-			Log.d("ldk", "deltaTime:" + deltaTime); 
+			AppDirector.getInstance().setmDeltaTime(deltaTime);
+			//Log.d("ldk", "deltaTime:" + deltaTime); 
 		}
 
 	}
