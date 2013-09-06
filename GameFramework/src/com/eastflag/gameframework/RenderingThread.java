@@ -1,6 +1,9 @@
 package com.eastflag.gameframework;
 
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
@@ -11,10 +14,21 @@ public class RenderingThread extends Thread {
 	private SurfaceHolder mSurfaceHolder;
 	
 	private  long deltaTime = 1;
+	
+	private Canvas virtualCanvas; //가상 작업 공간
+	private Rect dstRect; //실제 디바이스
+	private Bitmap mBitmap;
 
 	public RenderingThread(GameView gameView, SurfaceHolder mSurfaceHolder) {
 		mGameView = gameView;
 		this.mSurfaceHolder = mSurfaceHolder;
+		
+		//작업공간을 정의
+		mBitmap = Bitmap.createBitmap(1080, 1920, Config.ARGB_8888);
+		//숙제 : 하드코딩 제거, AppDirector로 이동기
+		virtualCanvas = new Canvas();
+		virtualCanvas.setBitmap(mBitmap);
+		dstRect = new Rect();
 	}
 
 	@Override
@@ -33,12 +47,18 @@ public class RenderingThread extends Thread {
 				mGameView.update();
 
 				// present
-				mGameView.present(canvas);
+				//mGameView.present(canvas);
+				mGameView.present(virtualCanvas);
 				// 도화지를 떼내서 필름에 갖다 붙이기
 			} catch (Exception e) {
 
 			} finally {
 				mSurfaceHolder.unlockCanvasAndPost(canvas);
+				
+				//작업공간을 실제 디바이스 크기로 늘리기
+				canvas.getClipBounds(dstRect); // dstRect에 실제 디바이스크기를 할당
+				//숙제 : dstRect 크기 Log.d로  찍어보기
+				canvas.drawBitmap(mBitmap, null, dstRect, null); //작업공간을 실제 디바이스로 늘리기
 			}
 			
 			deltaTime = System.currentTimeMillis() - currTime;
