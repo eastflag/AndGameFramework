@@ -52,13 +52,14 @@ public class RenderingThread extends Thread {
 				// 도화지를 떼내서 필름에 갖다 붙이기
 			} catch (Exception e) {
 
-			} finally {
-				mSurfaceHolder.unlockCanvasAndPost(canvas);
-				
+			} finally {			
 				//작업공간을 실제 디바이스 크기로 늘리기
 				canvas.getClipBounds(dstRect); // dstRect에 실제 디바이스크기를 할당
 				//숙제 : dstRect 크기 Log.d로  찍어보기
 				canvas.drawBitmap(mBitmap, null, dstRect, null); //작업공간을 실제 디바이스로 늘리기
+				
+				//다 그려진 도화지를 떼서 필름에 갖다 붙이기 (최종 작업)
+				mSurfaceHolder.unlockCanvasAndPost(canvas);
 			}
 			
 			deltaTime = System.currentTimeMillis() - currTime;
