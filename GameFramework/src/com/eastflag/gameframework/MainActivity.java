@@ -9,6 +9,8 @@ import android.graphics.Paint;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 public class MainActivity extends Activity {
 	
@@ -19,6 +21,12 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		//FullScreen 만들기
+		//타이틀바 없애기
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		//안테나영역 없애기
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
 		//setContentView(R.layout.activity_main);
 		//setContentView(new MyView(this));  //한장의 그림과 같음
 		setContentView(new GameView(this));  //영화와 같음.

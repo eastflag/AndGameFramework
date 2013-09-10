@@ -1,9 +1,13 @@
 package com.eastflag.gameframework;
 
+import com.eastflag.gameframework.scene.IScene;
+import com.eastflag.gameframework.scene.SceneMenu;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
@@ -13,6 +17,9 @@ import android.view.SurfaceView;
 public class GameView extends SurfaceView implements Callback{
 	RenderingThread mRenderingThread;
 	Paint mPaint;
+	
+	//씬 정의
+	private IScene mIScene;
 
 	public GameView(Context context) {
 		super(context);
@@ -22,10 +29,11 @@ public class GameView extends SurfaceView implements Callback{
 		mHolder.addCallback(this);
 		mRenderingThread = new RenderingThread(this, mHolder);
 		
-		//페인트 색 정의
-		mPaint = new Paint();
-		mPaint.setTextSize(30);
-		mPaint.setColor(Color.WHITE);
+		mIScene = new SceneMenu(); //최초 시작시에는 메뉴 씬으로 시작
+		
+		//초기화
+		setFocusable(true);
+		AppDirector.getInstance().setmGameView(this);
 	}
 
 	//필름을 카메라에 끼운 상태
@@ -57,27 +65,22 @@ public class GameView extends SurfaceView implements Callback{
 	
 	//3. 필름의 상태 업데이트
 	public void update() {
-		
+		mIScene.update();
 	}
 	
 	//4. 필름에 그림 그리기
 	public void present(Canvas canvas){
-		//바탕색을 파란색으로 칠하기
-		canvas.drawColor(Color.BLUE);
-		//회색 원 그리기
-		//canvas.drawCircle(200, 200, 100, mPaint);
-		//ToDo (숙제) : 100, 100에 deltaTime, 100, 200에 FPS 찍기
-		//힌트 :  drawText 와 위에 선언된 mPaint 이용
-		long deltaTime = AppDirector.getInstance().getmDeltaTime();
-		try {
-			canvas.drawText("deltaTime: " + deltaTime, 100, 100, mPaint);
-			canvas.drawText("FPS: " + 1000f / deltaTime, 100, 200, mPaint);
-		} catch (ArithmeticException e) {
-
-		} catch (Exception e) {
-
-		}
-
+		mIScene.present(canvas);
 	}
 
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		mIScene.onTouchEvent(event);
+		return true; //이벤트를 더이상 위로 발생시키지 않고 내가 처리하고 끝냄.
+	}
+
+	public void changeScene(IScene scene){
+		//씬전환하는 코드 
+		mIScene = scene;
+	}
 }

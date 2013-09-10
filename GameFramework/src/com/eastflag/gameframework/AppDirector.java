@@ -29,4 +29,13 @@ public class AppDirector extends Object {
 		this.mDeltaTime = mDeltaTime;
 	}
 	
+	private GameView mGameView;
+	public GameView getmGameView() {
+		return mGameView;
+	}
+	public void setmGameView(GameView mGameView) {
+		this.mGameView = mGameView;
+	}
+	
+	
 }
