@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
@@ -75,7 +76,9 @@ public class GameView extends SurfaceView implements Callback{
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		mIScene.onTouchEvent(event);
+		//event를 AppDirector에게 넘겨서 작업공간의 지점으로 변환한뒤 씬에게 넘김
+		Log.d("ldk", "device x:" +  event.getX() + ",y:" + event.getY());
+		mIScene.onTouchEvent(AppDirector.getInstance().convertEvent(event));
 		return true; //이벤트를 더이상 위로 발생시키지 않고 내가 처리하고 끝냄.
 	}
 

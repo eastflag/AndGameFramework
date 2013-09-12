@@ -27,6 +27,11 @@ public class MainActivity extends Activity {
 		//안테나영역 없애기
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        //초기화
+        //디바이스 정보얻기, 비트맵 로딩, 사운드로딩
+        AppDirector.getInstance().setmMainActivity(this);
+        AppDirector.getInstance().initialize();
+        
 		//setContentView(R.layout.activity_main);
 		//setContentView(new MyView(this));  //한장의 그림과 같음
 		setContentView(new GameView(this));  //영화와 같음.
