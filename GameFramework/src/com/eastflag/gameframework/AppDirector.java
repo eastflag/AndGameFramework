@@ -1,5 +1,10 @@
 package com.eastflag.gameframework;
 
+import java.io.IOException;
+
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -9,8 +14,12 @@ public class AppDirector {
 	private int mWidth; 
 	private int mHeight;
 	//작업가상공간 설정하기 :FHD로 가정
-	private int mVirtualWidth = 1080;
-	private int mVirtualHeight =1920;
+	public int mVirtualWidth = 1080;
+	public int mVirtualHeight =1920;
+	
+	//Bitmap
+	public Bitmap backGround, backCloud; //백그라운드
+	public Bitmap menuNew, menuNewOn; // new game 메뉴
 	
 	//싱글턴 패턴----------
 	//앱 전체에 반드시 하나만 존재.
@@ -38,6 +47,16 @@ public class AppDirector {
 		mWidth = metrics.widthPixels;
 		mHeight = metrics.heightPixels;
 		//비트맵 로딩
+		AssetManager am = mMainActivity.getAssets();
+		try {
+			backGround = BitmapFactory.decodeStream(am.open("background2.jpg"));
+			backCloud = BitmapFactory.decodeStream(am.open("background_2.png"));
+			menuNew = BitmapFactory.decodeStream(am.open("btn00.png"));
+			menuNewOn =  BitmapFactory.decodeStream(am.open("btn01.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//사운드 로딩
 	}
