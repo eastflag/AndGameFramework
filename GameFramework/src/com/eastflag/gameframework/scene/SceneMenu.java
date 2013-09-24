@@ -3,6 +3,7 @@ package com.eastflag.gameframework.scene;
 import com.eastflag.gameframework.AppDirector;
 import com.eastflag.gameframework.object.Background;
 import com.eastflag.gameframework.object.ImageButton;
+import com.eastflag.gameframework.object.SpriteObject;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,6 +14,8 @@ public class SceneMenu implements IScene {
 	private AppDirector mAppDirector;
 	private Background mBack, mBackCloud;
 	private ImageButton mMenuNew;
+	
+	private SpriteObject missile;
 	
 	public SceneMenu() {
 		mAppDirector = AppDirector.getInstance();
@@ -25,6 +28,9 @@ public class SceneMenu implements IScene {
 		mMenuNew = new ImageButton(mAppDirector.menuNew, mAppDirector.menuNewOn);
 		//mMenuNew.setPostion(200, 400);
 		mMenuNew.setPosition(AppDirector.getInstance().mVirtualWidth/2, 500, 800, 200);
+	
+		missile = new SpriteObject(AppDirector.getInstance().missile);
+		missile.setPosition(540, 540, 100, 100);
 	}
 
 	@Override
@@ -39,6 +45,7 @@ public class SceneMenu implements IScene {
 		mBack.present(canvas);
 		mBackCloud.present(canvas);
 		mMenuNew.present(canvas);
+		missile.present(canvas);
 	}
 
 	@Override
@@ -48,9 +55,9 @@ public class SceneMenu implements IScene {
 		//버튼 클릭 유무 체크
 		//버튼 클릭이 된거면, down이벤트시 해당 버튼의 bitmap을 바꾸고, up 이벤트에서 원복
 		switch(event.getAction()) {
-		case MotionEvent.ACTION_DOWN:
-			if(mMenuNew.isClicked((int)event.getX(), (int)event.getY())) {
-				//버튼 이미지 변경
+		case MotionEvent.ACTION_UP:
+			if(mMenuNew.isClicked(event)) {
+				AppDirector.getInstance().getmGameView().changeScene(new SceneStart());
 			}
 			break;
 		

@@ -20,6 +20,8 @@ public class AppDirector {
 	//Bitmap
 	public Bitmap backGround, backCloud; //백그라운드
 	public Bitmap menuNew, menuNewOn; // new game 메뉴
+	public Bitmap player;
+	public Bitmap missile; //아군 미사일
 	
 	//싱글턴 패턴----------
 	//앱 전체에 반드시 하나만 존재.
@@ -53,6 +55,8 @@ public class AppDirector {
 			backCloud = BitmapFactory.decodeStream(am.open("background_2.png"));
 			menuNew = BitmapFactory.decodeStream(am.open("btn00.png"));
 			menuNewOn =  BitmapFactory.decodeStream(am.open("btn01.png"));
+			player =  BitmapFactory.decodeStream(am.open("player.png"));
+			missile =  BitmapFactory.decodeStream(am.open("missile_1.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

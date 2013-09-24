@@ -2,11 +2,10 @@ package com.eastflag.gameframework.object;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.view.MotionEvent;
 
-public class ImageButton {
+public class ImageButton extends Sprite {
 
-	private int mX, mY; //비트맵이 그려질 위치
-	private int centerX, centerY; //비트맵이 그려지는 중앙 지점
 	private Bitmap mBitmap, mBitmapOn;
 	
 	public ImageButton(Bitmap bitmap, Bitmap bitmapOn) {
@@ -21,8 +20,7 @@ public class ImageButton {
 	}
 	
 	public void setPosition(int centerX, int centerY, int width, int height) {
-		mX = centerX - width/2;
-		mY = centerY - height/2;
+		super.setPosition(centerX, centerY, width, height);
 		
 		mBitmap =  Bitmap.createScaledBitmap(mBitmap, width, height, false);
 	}
@@ -30,9 +28,9 @@ public class ImageButton {
 	//update
 	
 	//버튼 체크 유무 
-	public boolean isClicked(int x, int y) {
-		if (x > mX && x < mX + mBitmap.getWidth() && y > mY
-				&& y < mY + mBitmap.getWidth()) {
+	public boolean isClicked(MotionEvent event) {
+		if (event.getX() > mX && event.getX() < mX + mBitmap.getWidth() && 
+				event.getY() > mY && event.getY() < mY + mBitmap.getHeight()) {
 			return true;
 		} else {
 			return false;
