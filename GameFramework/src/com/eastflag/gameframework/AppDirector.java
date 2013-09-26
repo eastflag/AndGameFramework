@@ -5,6 +5,7 @@ import java.io.IOException;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -18,10 +19,12 @@ public class AppDirector {
 	public int mVirtualHeight =1920;
 	
 	//Bitmap
+	//public Bitmap menuNew, menuNewOn; // new game 메뉴
 	public Bitmap backGround, backCloud; //백그라운드
-	public Bitmap menuNew, menuNewOn; // new game 메뉴
-	public Bitmap player;
+	public Bitmap player;;
 	public Bitmap missile; //아군 미사일
+	public Bitmap upTriangle, rightTriangle, downTriangle, leftTriangle; //상하좌우키패드
+	public Bitmap circle; //미사일 발사 키패드
 	
 	//싱글턴 패턴----------
 	//앱 전체에 반드시 하나만 존재.
@@ -53,10 +56,24 @@ public class AppDirector {
 		try {
 			backGround = BitmapFactory.decodeStream(am.open("background2.jpg"));
 			backCloud = BitmapFactory.decodeStream(am.open("background_2.png"));
-			menuNew = BitmapFactory.decodeStream(am.open("btn00.png"));
-			menuNewOn =  BitmapFactory.decodeStream(am.open("btn01.png"));
+//			menuNew = BitmapFactory.decodeStream(am.open("btn00.png"));
+//			menuNewOn =  BitmapFactory.decodeStream(am.open("btn01.png"));
 			player =  BitmapFactory.decodeStream(am.open("player.png"));
 			missile =  BitmapFactory.decodeStream(am.open("missile_1.png"));
+			
+			upTriangle =  BitmapFactory.decodeStream(am.open("triangle.png"));
+			Matrix m = new Matrix();
+			
+			m.postRotate(90, upTriangle.getWidth()/2, upTriangle.getHeight()/2);
+			rightTriangle = Bitmap.createBitmap(upTriangle, 0, 0, upTriangle.getWidth(), upTriangle.getHeight(), m, false);
+			
+			m.postRotate(90, upTriangle.getWidth()/2, upTriangle.getHeight()/2);
+			downTriangle = Bitmap.createBitmap(upTriangle, 0, 0, upTriangle.getWidth(), upTriangle.getHeight(), m, false);
+			
+			m.postRotate(90, upTriangle.getWidth()/2, upTriangle.getHeight()/2);
+			leftTriangle = Bitmap.createBitmap(upTriangle, 0, 0, upTriangle.getWidth(), upTriangle.getHeight(), m, false);
+			
+			circle =  BitmapFactory.decodeStream(am.open("circle.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

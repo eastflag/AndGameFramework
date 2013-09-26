@@ -25,18 +25,6 @@ public class ImageButton extends Sprite {
 		mBitmap =  Bitmap.createScaledBitmap(mBitmap, width, height, false);
 	}
 	
-	//update
-	
-	//버튼 체크 유무 
-	public boolean isClicked(MotionEvent event) {
-		if (event.getX() > mX && event.getX() < mX + mBitmap.getWidth() && 
-				event.getY() > mY && event.getY() < mY + mBitmap.getHeight()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
 	//Bitmap 변경
 	public void toggleButton() {
 		

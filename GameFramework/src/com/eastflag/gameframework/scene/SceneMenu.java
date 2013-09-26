@@ -4,6 +4,7 @@ import com.eastflag.gameframework.AppDirector;
 import com.eastflag.gameframework.object.Background;
 import com.eastflag.gameframework.object.ImageButton;
 import com.eastflag.gameframework.object.SpriteObject;
+import com.eastflag.gameframework.object.TextButton;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,40 +13,41 @@ import android.view.MotionEvent;
 public class SceneMenu implements IScene {
 	
 	private AppDirector mAppDirector;
-	private Background mBack, mBackCloud;
-	private ImageButton mMenuNew;
+
+	//private ImageButton mMenuNew;
+	private TextButton mMenuShoot;
+	private TextButton mMenuBoard;
 	
 	private SpriteObject missile;
 	
 	public SceneMenu() {
 		mAppDirector = AppDirector.getInstance();
-		//백그라운드
-		mBack = new Background(mAppDirector.backGround);
-		mBack.setSpeed(1);
-		mBackCloud = new Background(mAppDirector.backCloud);
-		mBackCloud.setSpeed(-1);
+
 		//메뉴
-		mMenuNew = new ImageButton(mAppDirector.menuNew, mAppDirector.menuNewOn);
+		mMenuShoot = new TextButton("Shooting");
+		mMenuShoot.setPosition(540, 600, 700, 100);
+		mMenuBoard = new TextButton("Board");
+		mMenuBoard.setPosition(540, 1200, 700, 100);
+		//mMenuNew = new ImageButton(mAppDirector.menuNew, mAppDirector.menuNewOn);
 		//mMenuNew.setPostion(200, 400);
-		mMenuNew.setPosition(AppDirector.getInstance().mVirtualWidth/2, 500, 800, 200);
+		//mMenuNew.setPosition(AppDirector.getInstance().mVirtualWidth/2, 500, 800, 200);
 	
-		missile = new SpriteObject(AppDirector.getInstance().missile);
-		missile.setPosition(540, 540, 100, 100);
+		//missile = new SpriteObject(AppDirector.getInstance().missile);
+		//missile.setPosition(540, 540, 100, 100);
 	}
 
 	@Override
 	public void update() {
-		mBack.update();
-		mBackCloud.update();
+
 	}
 
 	@Override
 	public void present(Canvas canvas) {
-		//canvas.drawColor(Color.DKGRAY);
-		mBack.present(canvas);
-		mBackCloud.present(canvas);
-		mMenuNew.present(canvas);
-		missile.present(canvas);
+		canvas.drawColor(Color.DKGRAY);
+
+		//mMenuNew.present(canvas);
+		mMenuShoot.present(canvas);
+		mMenuBoard.present(canvas);
 	}
 
 	@Override
@@ -54,14 +56,15 @@ public class SceneMenu implements IScene {
 		//AppDirector.getInstance().getmGameView().changeScene(new SceneStart());
 		//버튼 클릭 유무 체크
 		//버튼 클릭이 된거면, down이벤트시 해당 버튼의 bitmap을 바꾸고, up 이벤트에서 원복
-		switch(event.getAction()) {
-		case MotionEvent.ACTION_UP:
-			if(mMenuNew.isClicked(event)) {
-				AppDirector.getInstance().getmGameView().changeScene(new SceneStart());
-			}
-			break;
 		
+		if(mMenuShoot.isSelected(event) == MotionEvent.ACTION_UP) {
+			AppDirector.getInstance().getmGameView().changeScene(new SceneShoot());
 		}
+		
+		if(mMenuBoard.isSelected(event) == MotionEvent.ACTION_UP) {
+			AppDirector.getInstance().getmGameView().changeScene(new SceneBoard());
+		}
+
 	}
 
 }
