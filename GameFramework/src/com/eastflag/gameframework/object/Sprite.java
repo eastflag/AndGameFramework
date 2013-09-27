@@ -1,5 +1,7 @@
 package com.eastflag.gameframework.object;
 
+import com.eastflag.gameframework.AppDirector;
+
 import android.graphics.Rect;
 import android.view.MotionEvent;
 
@@ -8,9 +10,11 @@ public abstract class Sprite {
 	protected int mWidth, mHeight; //화면상에 비트맵의 넓이, 높이
 	protected Rect dstRect; //화면상에 그려지는 영역
 	protected boolean isOn; //현재 선택이 되었느냐
+	protected AppDirector mAppDirector;
 	
 	public Sprite() {
 		dstRect = new Rect(mX, mY, mX+mWidth, mY+mHeight);//인스턴스 생성
+		mAppDirector = AppDirector.getInstance();
 	}
 	
 	public void setPosition(int centerX, int centerY, int width, int height) {
@@ -43,4 +47,21 @@ public abstract class Sprite {
 		} 
 		return result;
 	}
+
+	public int getmX() {
+		return mX;
+	}
+
+	public int getmY() {
+		return mY;
+	}
+
+	public int getmWidth() {
+		return mWidth;
+	}
+	
+	public int getmHeight() {
+		return mHeight;
+	}
+
 }

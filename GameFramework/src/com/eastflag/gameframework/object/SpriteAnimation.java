@@ -9,7 +9,7 @@ import android.graphics.Rect;
 public class SpriteAnimation extends Sprite {
 	private Bitmap mBitmap;
 	private Rect srcRect; //비트맵상의 위치
-	private Rect dstRect; //화면상에 그려질 위치
+	protected Rect dstRect; //화면상에 그려질 위치
 	
 	private int frameCount; // 프레임 갯수
 	private int frameTime; // 한 프레임이 보여지는 시간
