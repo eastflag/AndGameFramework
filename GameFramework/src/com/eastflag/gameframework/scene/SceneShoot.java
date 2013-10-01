@@ -1,11 +1,13 @@
 package com.eastflag.gameframework.scene;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import com.eastflag.gameframework.AppDirector;
 import com.eastflag.gameframework.object.Background;
+import com.eastflag.gameframework.object.Enemy;
 import com.eastflag.gameframework.object.Missile;
 import com.eastflag.gameframework.object.Player;
 import com.eastflag.gameframework.object.SpriteAnimation;
@@ -28,6 +30,9 @@ public class SceneShoot implements IScene{
 	private SpriteObject upKeypad, rightKeypad, downKeypad, leftKeypad, tapKeypad;
 	
 	private BlockingQueue<Missile> mMissileList = new ArrayBlockingQueue<Missile>(100);
+	private BlockingQueue<Enemy> mEnemyList = new ArrayBlockingQueue<Enemy>(100);
+	
+	private long localTime;
 	
 	public SceneShoot() {
 		mAppDirector = AppDirector.getInstance();
@@ -64,6 +69,8 @@ public class SceneShoot implements IScene{
 	public void update() {
 		// TODO Auto-generated method stub
 //		mTimer.update();
+		localTime += mAppDirector.getmDeltaTime();
+		
 		mBack.update();
 		mBackCloud.update();
 		
@@ -76,6 +83,14 @@ public class SceneShoot implements IScene{
 			}
 		}
 		
+		for(Enemy enemy : mEnemyList) {
+			enemy.update();
+			if(enemy.mIsDead) {
+				mEnemyList.remove(enemy);
+			}
+		}
+		
+		addEnemy();
 	}
 
 	@Override
@@ -110,6 +125,10 @@ public class SceneShoot implements IScene{
 		for(Missile missile : mMissileList) {
 			missile.present(canvas);
 		}
+		
+		for(Enemy enemy : mEnemyList) {
+			enemy.present(canvas);
+		}
 	}
 
 	@Override
@@ -134,6 +153,7 @@ public class SceneShoot implements IScene{
 				Missile missile = new Missile(mAppDirector.missile);
 				missile.setPosition(mPlayer.getmX() + mPlayer.getmWidth()/2, mPlayer.getmY(), 45, 45);
 				mMissileList.add(missile);
+				mAppDirector.playSoundEffect(AppDirector.SOUND_MY_MISSILE);
 			}
 			break;
 		case MotionEvent.ACTION_MOVE:
@@ -146,4 +166,16 @@ public class SceneShoot implements IScene{
 		}
 	}
 
+	private void addEnemy() {
+		while(localTime >= 5000) {
+			Random rand = new Random();
+			Enemy enemy = new Enemy(mAppDirector.enemy1);
+			enemy.init(6, 100, 62, 104, true);
+			int startX = enemy.getmWidth()/2 + rand.nextInt(1080-enemy.getmWidth());
+			int startY = -enemy.getmHeight();
+			enemy.setPosition(startX, startY, 120, 200);
+			mEnemyList.add(enemy);
+			localTime -= 5000;
+		}
+	}
 }
