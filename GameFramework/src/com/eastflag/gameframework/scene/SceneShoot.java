@@ -8,8 +8,10 @@ import java.util.concurrent.BlockingQueue;
 import com.eastflag.gameframework.AppDirector;
 import com.eastflag.gameframework.object.Background;
 import com.eastflag.gameframework.object.Enemy;
+import com.eastflag.gameframework.object.Explosion;
 import com.eastflag.gameframework.object.Missile;
 import com.eastflag.gameframework.object.Player;
+import com.eastflag.gameframework.object.Sprite;
 import com.eastflag.gameframework.object.SpriteAnimation;
 import com.eastflag.gameframework.object.SpriteObject;
 import com.eastflag.gameframework.object.Timer;
@@ -19,6 +21,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.ViewDebug.ExportedProperty;
 
 public class SceneShoot implements IScene{
 //	private Timer mTimer;
@@ -31,6 +34,8 @@ public class SceneShoot implements IScene{
 	
 	private BlockingQueue<Missile> mMissileList = new ArrayBlockingQueue<Missile>(100);
 	private BlockingQueue<Enemy> mEnemyList = new ArrayBlockingQueue<Enemy>(100);
+	private BlockingQueue<Missile> mEnemyMissileList = new ArrayBlockingQueue<Missile>(100);
+	private BlockingQueue<Explosion> mExplosionList = new ArrayBlockingQueue<Explosion>(100); 
 	
 	private long localTime;
 	
@@ -49,7 +54,7 @@ public class SceneShoot implements IScene{
 		mBackCloud.setSpeed(-1);
 		
 		mPlayer = new Player(AppDirector.getInstance().player);
-		mPlayer.init(6, 100, 62, 104, true);
+		mPlayer.init(6, 100, 62, 104, 1);
 		mPlayer.setPosition(mAppDirector.mVirtualWidth/2, 
 				mAppDirector.mVirtualHeight-200, 120, 200);
 		
@@ -76,21 +81,47 @@ public class SceneShoot implements IScene{
 		
 		mPlayer.update();
 		
+		//아군 미사일
 		for(Missile missile : mMissileList) {
 			missile.update();
-			if(missile.getMIsDead()) {
+			if(missile.ismIsDead()) {
 				mMissileList.remove(missile);
 			}
 		}
 		
+		//적군 리스트
 		for(Enemy enemy : mEnemyList) {
 			enemy.update();
-			if(enemy.mIsDead) {
+			if(enemy.ismIsDead()) {
 				mEnemyList.remove(enemy);
+			}
+			if(enemy.makeMissile) {
+				//미사일 생성
+				Missile missile = new Missile(mAppDirector.enemy_missile, 3); //10ms에 3px 아래로
+				missile.setPosition(enemy.getmX()+enemy.getmWidth()/2, 
+						enemy.getmY()+enemy.getmHeight(), 45, 45);
+				mEnemyMissileList.add(missile);
+				enemy.makeMissile = false;
+			}
+		}
+		
+		//적군 미사일 리스트
+		for(Missile missile : mEnemyMissileList) {
+			missile.update();
+			if(missile.ismIsDead()) {
+				mEnemyMissileList.remove(missile);
+			}
+		}
+		
+		for(Explosion explosion : mExplosionList) {
+			explosion.update();
+			if(explosion.ismIsDead()) {
+				mExplosionList.remove(explosion);
 			}
 		}
 		
 		addEnemy();
+		checkCollision();
 	}
 
 	@Override
@@ -129,6 +160,15 @@ public class SceneShoot implements IScene{
 		for(Enemy enemy : mEnemyList) {
 			enemy.present(canvas);
 		}
+		
+		//적군 미사일 리스트
+		for(Missile missile : mEnemyMissileList) {
+			missile.present(canvas);
+		}
+		
+		for(Explosion explosion : mExplosionList) {
+			explosion.present(canvas);
+		}
 	}
 
 	@Override
@@ -150,7 +190,7 @@ public class SceneShoot implements IScene{
 				mPlayer.startMoving(-1, 0);
 			}
 			if(tapKeypad.isSelected(event) == MotionEvent.ACTION_DOWN) {
-				Missile missile = new Missile(mAppDirector.missile);
+				Missile missile = new Missile(mAppDirector.missile, -3); //10ms에 위로 3px
 				missile.setPosition(mPlayer.getmX() + mPlayer.getmWidth()/2, mPlayer.getmY(), 45, 45);
 				mMissileList.add(missile);
 				mAppDirector.playSoundEffect(AppDirector.SOUND_MY_MISSILE);
@@ -170,12 +210,42 @@ public class SceneShoot implements IScene{
 		while(localTime >= 5000) {
 			Random rand = new Random();
 			Enemy enemy = new Enemy(mAppDirector.enemy1);
-			enemy.init(6, 100, 62, 104, true);
+			enemy.init(6, 100, 62, 104, 1);
 			int startX = enemy.getmWidth()/2 + rand.nextInt(1080-enemy.getmWidth());
 			int startY = -enemy.getmHeight();
 			enemy.setPosition(startX, startY, 120, 200);
 			mEnemyList.add(enemy);
 			localTime -= 5000;
+		}
+	}
+	
+	private void checkCollision() {
+		//아군 미사일과 적군 충돌체크
+		for(Missile missile : mMissileList) {
+			for(Enemy enemy : mEnemyList) {
+				if(checkBoxToBox(missile, enemy)) {
+					//미사일과 적군을 remove
+					mMissileList.remove(missile);
+					mEnemyList.remove(enemy);
+					//폭발효과 처리
+					Explosion explosion = new Explosion(mAppDirector.explosion_bitmap);
+					explosion.init(6, 100, 66, 104, 3);
+					explosion.setPosition(enemy.getmX()+enemy.getmWidth()/2, 
+							enemy.getmX()+enemy.getmHeight()/2, 120, 200);
+					mExplosionList.add(explosion);
+					//폭발음효과
+					mAppDirector.playSoundEffect(AppDirector.SOUND_EXPLOSION);
+					break;
+				}
+			}
+		}
+	}
+	
+	private boolean checkBoxToBox(Sprite s1, Sprite s2) {
+		if(s1.getDstRect().intersect(s2.getDstRect())) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 }

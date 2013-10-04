@@ -11,6 +11,7 @@ public abstract class Sprite {
 	protected Rect dstRect; //화면상에 그려지는 영역
 	protected boolean isOn; //현재 선택이 되었느냐
 	protected AppDirector mAppDirector;
+	protected boolean mIsDead;
 	
 	public Sprite() {
 		dstRect = new Rect(mX, mY, mX+mWidth, mY+mHeight);//인스턴스 생성
@@ -64,4 +65,15 @@ public abstract class Sprite {
 		return mHeight;
 	}
 
+	public Rect getDstRect() {
+		return dstRect;
+	}
+
+	public boolean ismIsDead() {
+		return mIsDead;
+	}
+
+	public void setmIsDead(boolean mIsDead) {
+		this.mIsDead = mIsDead;
+	}
 }

@@ -1,12 +1,18 @@
 package com.eastflag.gameframework;
 
+import java.io.IOException;
+
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
@@ -17,6 +23,8 @@ public class MainActivity extends Activity {
 	//public static MainActivity mMainActivity;
 	public int a = 1;
 	AppDirector mAppDirector;
+	
+	private MediaPlayer mMediaPlayer;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +44,72 @@ public class MainActivity extends Activity {
 		//setContentView(new MyView(this));  //한장의 그림과 같음
 		setContentView(new GameView(this));  //영화와 같음.
 		
+		mMediaPlayer = new MediaPlayer();
+		
+		AssetManager am = getAssets();
+		try {
+			AssetFileDescriptor fd =  am.openFd("bgm.mp3");
+			mMediaPlayer.setDataSource(fd.getFileDescriptor(), fd.getStartOffset(), fd.getLength());
+			mMediaPlayer.prepare();
+			mMediaPlayer.setVolume(1f, 1f);
+		} catch (IllegalStateException ise) {
+			
+		} catch (IllegalArgumentException iae) {
+			
+		} catch (IOException ioe) {
+			
+		} catch (Exception e) {
+			
+		}
+		
 		Log.d("ldk", "AppDirector 메모리 주소값:" + AppDirector.getInstance());
 		Log.d("ldk", "AppDirector 메모리 주소값:" + AppDirector.getInstance());
 	}
+	
+	
+
+	@Override
+	protected void onResume() {
+		playBGM();
+		super.onResume();
+	}
+
+	@Override
+	protected void onPause() {
+		pauseBGM();
+		super.onPause();
+	}
+
+	@Override
+	protected void onDestroy() {
+		stopBGM();
+		super.onDestroy();
+	}
+	
+	public void playBGM() {
+		try {
+			mMediaPlayer.start();
+		} catch(IllegalStateException ise) {
+			
+		}
+	}
+	
+	public void pauseBGM() {
+		try {
+			mMediaPlayer.pause();
+		} catch(IllegalStateException ise) {
+			
+		}
+	}
+
+	public void stopBGM() {
+		try {
+			mMediaPlayer.release();
+		} catch(IllegalStateException ise) {
+			
+		}
+	}
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -46,6 +117,18 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+
+
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if(keyCode == KeyEvent.KEYCODE_BACK) {
+			//다이얼로그 생성 (Builder패턴으로)
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+	
+	
 
 }
 

@@ -34,9 +34,11 @@ public class AppDirector {
 	public Bitmap backGround, backCloud; //백그라운드
 	public Bitmap player;;
 	public Bitmap missile; //아군 미사일
+	public Bitmap enemy_missile; //적군 미사일
 	public Bitmap upTriangle, rightTriangle, downTriangle, leftTriangle; //상하좌우키패드
 	public Bitmap circle; //미사일 발사 키패드
 	public Bitmap enemy1, enemy2, enemy3;
+	public Bitmap explosion_bitmap;
 	
 	//싱글턴 패턴----------
 	//앱 전체에 반드시 하나만 존재.
@@ -70,7 +72,7 @@ public class AppDirector {
 		mSoundMap.put(SOUND_MY_MISSILE, missile1);
 		int missile2 = mSoundPool.load(mMainActivity, R.raw.missile2, 1); //적군 미사일 사운드
 		mSoundMap.put(SOUND_ENEMY_MISSILE, missile1);
-		int explosion = mSoundPool.load(mMainActivity, R.raw.explosion, 1); //아군 미사일 사운드
+		int explosion = mSoundPool.load(mMainActivity, R.raw.explosion, 1); //폭발음 사운드
 		mSoundMap.put(SOUND_EXPLOSION, explosion);
 		
 		//비트맵 로딩
@@ -82,6 +84,7 @@ public class AppDirector {
 //			menuNewOn =  BitmapFactory.decodeStream(am.open("btn01.png"));
 			player =  BitmapFactory.decodeStream(am.open("player.png"));
 			missile =  BitmapFactory.decodeStream(am.open("missile_1.png"));
+			enemy_missile =  BitmapFactory.decodeStream(am.open("missile_2.png"));
 			
 			upTriangle =  BitmapFactory.decodeStream(am.open("triangle.png"));
 			Matrix m = new Matrix();
@@ -100,6 +103,8 @@ public class AppDirector {
 			enemy1 =  BitmapFactory.decodeStream(am.open("enemy1.png"));
 			enemy2 =  BitmapFactory.decodeStream(am.open("enemy2.png"));
 			enemy3 =  BitmapFactory.decodeStream(am.open("enemy3.png"));
+			
+			explosion_bitmap =  BitmapFactory.decodeStream(am.open("explosion.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

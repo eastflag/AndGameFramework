@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 
 public class Enemy extends SpriteAnimation{
 	private long localTime;
-	public boolean mIsDead;
 	private long localMissileTime;
 	public boolean makeMissile;
 	
@@ -28,11 +27,11 @@ public class Enemy extends SpriteAnimation{
 			dstRect.set(mX, mY, mX+mWidth, mY+mHeight);
 		}
 		
-		//5초마다 미사일 생성
+		//3초마다 미사일 생성
 		localMissileTime += mAppDirector.getmDeltaTime();
-		while(localMissileTime >= 5000) {
+		while(localMissileTime >= 3000) {
 			makeMissile = true;
-			localMissileTime -= 5000;
+			localMissileTime -= 3000;
 		}
 	}
 }

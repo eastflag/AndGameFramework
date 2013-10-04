@@ -4,10 +4,11 @@ import android.graphics.Bitmap;
 
 public class Missile extends SpriteObject{
 	private long localTime;
-	private boolean mIsDead;
+	private int speed;
 
-	public Missile(Bitmap bitmap) {
+	public Missile(Bitmap bitmap, int speed) {
 		super(bitmap);
+		this.speed = speed;
 	}
 	
 	//10ms에 3px 위로 이동
@@ -16,7 +17,7 @@ public class Missile extends SpriteObject{
 		localTime += mAppDirector.getmDeltaTime();
 		
 		while(localTime >= 10) {
-			mY += -3;
+			mY += speed;
 			if(mY + mHeight < 0) {
 				mIsDead = true;
 				break;
@@ -24,10 +25,6 @@ public class Missile extends SpriteObject{
 			localTime -= 10;
 			dstRect.set(mX, mY, mX+mWidth, mY+mHeight);
 		}
-	}
-	
-	public boolean getMIsDead() {
-		return mIsDead;
 	}
 
 }

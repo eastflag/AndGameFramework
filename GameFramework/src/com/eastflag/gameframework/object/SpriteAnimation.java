@@ -15,7 +15,7 @@ public class SpriteAnimation extends Sprite {
 	private int frameTime; // 한 프레임이 보여지는 시간
 	private int currentFrame; //현재 보여지고 있는 프레임 인덱스(0부터 시작)
 	private int width, height; //한 프레임의 넓이, 높이
-	private boolean isRepeat;
+	private int isRepeat; //1:반복, 2: 반복안함, 계속 그림, 3: 반복안함, 삭제
 	private long localTime;
 	
 	//생성자에서는 bitmap만 초기화
@@ -31,7 +31,7 @@ public class SpriteAnimation extends Sprite {
 	}
 	
 	//init 함수에서 스프라이트 초기화
-	public void init(int frameCount, int frameTime, int width, int height, boolean isRepeat) {
+	public void init(int frameCount, int frameTime, int width, int height, int  isRepeat) {
 		this.frameCount = frameCount;
 		this.frameTime = frameTime;
 		this.width = width;
@@ -47,10 +47,12 @@ public class SpriteAnimation extends Sprite {
 			localTime -= frameTime;
 			if(currentFrame>=frameCount) {
 				//currentFrame = 0;
-				if(isRepeat) {
+				if(isRepeat == 1) {
 					currentFrame = 0;
-				} else {
+				} else if(isRepeat ==2) {
 					currentFrame -= 1; 
+				} else {
+					mIsDead = true;
 				}
 			}
 		}
