@@ -229,7 +229,11 @@ public class SceneShoot implements IScene{
 	private void addEnemy() {
 		while(localTime >= Time_To_Display_Enemy) {
 			Random rand = new Random();
-			Enemy enemy = new Enemy(mAppDirector.enemy1);
+			
+			//랜덤타입을 정해서 비트맵과 type을 넘겨준다.
+			int type = rand.nextInt(3);
+			
+			Enemy enemy = new Enemy(mAppDirector.enemy[type], type);
 			enemy.init(6, 100, 62, 104, 1);
 			int startX = enemy.getmWidth()/2 + rand.nextInt(1080-enemy.getmWidth());
 			int startY = -enemy.getmHeight();

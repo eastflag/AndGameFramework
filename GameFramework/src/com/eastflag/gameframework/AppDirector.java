@@ -3,6 +3,8 @@ package com.eastflag.gameframework;
 import java.io.IOException;
 import java.util.HashMap;
 
+import com.eastflag.gameframework.object.Enemy.EnemyType;
+
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -40,7 +42,7 @@ public class AppDirector {
 	public Bitmap enemy_missile; //적군 미사일
 	public Bitmap upTriangle, rightTriangle, downTriangle, leftTriangle; //상하좌우키패드
 	public Bitmap circle; //미사일 발사 키패드
-	public Bitmap enemy1, enemy2, enemy3;
+	public Bitmap enemy[] = new Bitmap[EnemyType.values().length];
 	public Bitmap explosion_bitmap;
 	
 	//싱글턴 패턴----------
@@ -109,9 +111,9 @@ public class AppDirector {
 			
 			circle =  BitmapFactory.decodeStream(am.open("circle.png"));
 			
-			enemy1 =  BitmapFactory.decodeStream(am.open("enemy1.png"));
-			enemy2 =  BitmapFactory.decodeStream(am.open("enemy2.png"));
-			enemy3 =  BitmapFactory.decodeStream(am.open("enemy3.png"));
+			enemy[EnemyType.AccelType.ordinal()] =  BitmapFactory.decodeStream(am.open("enemy1.png"));
+			enemy[EnemyType.LeftType.ordinal()] =  BitmapFactory.decodeStream(am.open("enemy2.png"));
+			enemy[EnemyType.RightType.ordinal()] =  BitmapFactory.decodeStream(am.open("enemy3.png"));
 			
 			explosion_bitmap =  BitmapFactory.decodeStream(am.open("explosion.png"));
 		} catch (IOException e) {
