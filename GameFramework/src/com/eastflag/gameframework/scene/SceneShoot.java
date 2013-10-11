@@ -14,6 +14,7 @@ import com.eastflag.gameframework.object.Player;
 import com.eastflag.gameframework.object.Sprite;
 import com.eastflag.gameframework.object.SpriteAnimation;
 import com.eastflag.gameframework.object.SpriteObject;
+import com.eastflag.gameframework.object.TextObject;
 import com.eastflag.gameframework.object.Timer;
 
 import android.graphics.Canvas;
@@ -25,6 +26,11 @@ import android.view.ViewDebug.ExportedProperty;
 
 public class SceneShoot implements IScene{
 //	private Timer mTimer;
+	private final int STATE_START = 1; //게임시작
+	private final int STATE_OVER = 3;  //게임 오버
+	private int mState = STATE_START;
+	
+	private int Time_To_Display_Enemy = 5000;
 	
 //	private Paint mPaint;
 	private AppDirector mAppDirector;
@@ -38,6 +44,8 @@ public class SceneShoot implements IScene{
 	private BlockingQueue<Explosion> mExplosionList = new ArrayBlockingQueue<Explosion>(100); 
 	
 	private long localTime;
+	
+	private TextObject mGameOver;
 	
 	public SceneShoot() {
 		mAppDirector = AppDirector.getInstance();
@@ -68,6 +76,9 @@ public class SceneShoot implements IScene{
 		leftKeypad.setPosition(50, 1770, 100, 100);
 		tapKeypad = new SpriteObject(mAppDirector.circle);
 		tapKeypad.setPosition(150, 1770, 100, 100);
+		
+		mGameOver = new TextObject("Game Over", Color.YELLOW, 200);
+		mGameOver.setPosition(1080/2, 1980/2, 0, 0);
 	}
 
 	@Override
@@ -79,7 +90,8 @@ public class SceneShoot implements IScene{
 		mBack.update();
 		mBackCloud.update();
 		
-		mPlayer.update();
+		if(mState == STATE_START) 
+			mPlayer.update();
 		
 		//아군 미사일
 		for(Missile missile : mMissileList) {
@@ -94,6 +106,7 @@ public class SceneShoot implements IScene{
 			enemy.update();
 			if(enemy.ismIsDead()) {
 				mEnemyList.remove(enemy);
+				continue;
 			}
 			if(enemy.makeMissile) {
 				//미사일 생성
@@ -169,10 +182,16 @@ public class SceneShoot implements IScene{
 		for(Explosion explosion : mExplosionList) {
 			explosion.present(canvas);
 		}
+		
+		if(mState == STATE_OVER) {
+			mGameOver.present(canvas);
+		}
 	}
 
 	@Override
 	public void onTouchEvent(MotionEvent event) {
+		if(mState == STATE_OVER) 
+			return;
 		//키패드 제어 : 해당 키가 클릭되었는지를 체크하여 제어
 		switch(event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
@@ -193,7 +212,8 @@ public class SceneShoot implements IScene{
 				Missile missile = new Missile(mAppDirector.missile, -3); //10ms에 위로 3px
 				missile.setPosition(mPlayer.getmX() + mPlayer.getmWidth()/2, mPlayer.getmY(), 45, 45);
 				mMissileList.add(missile);
-				mAppDirector.playSoundEffect(AppDirector.SOUND_MY_MISSILE);
+				if(mAppDirector.getSound())
+					mAppDirector.playSoundEffect(AppDirector.SOUND_MY_MISSILE);
 			}
 			break;
 		case MotionEvent.ACTION_MOVE:
@@ -207,7 +227,7 @@ public class SceneShoot implements IScene{
 	}
 
 	private void addEnemy() {
-		while(localTime >= 5000) {
+		while(localTime >= Time_To_Display_Enemy) {
 			Random rand = new Random();
 			Enemy enemy = new Enemy(mAppDirector.enemy1);
 			enemy.init(6, 100, 62, 104, 1);
@@ -215,7 +235,9 @@ public class SceneShoot implements IScene{
 			int startY = -enemy.getmHeight();
 			enemy.setPosition(startX, startY, 120, 200);
 			mEnemyList.add(enemy);
-			localTime -= 5000;
+			localTime -= Time_To_Display_Enemy;
+			
+			Time_To_Display_Enemy = (3 + rand.nextInt(5)) * 1000;  // 3초 ~ 7초
 		}
 	}
 	
@@ -225,20 +247,56 @@ public class SceneShoot implements IScene{
 			for(Enemy enemy : mEnemyList) {
 				if(checkBoxToBox(missile, enemy)) {
 					//미사일과 적군을 remove
-					mMissileList.remove(missile);
-					mEnemyList.remove(enemy);
+					//mMissileList.remove(missile);
+					//mEnemyList.remove(enemy);
+					missile.setmIsDead(true);
+					enemy.setmIsDead(true);
 					//폭발효과 처리
-					Explosion explosion = new Explosion(mAppDirector.explosion_bitmap);
-					explosion.init(6, 100, 66, 104, 3);
-					explosion.setPosition(enemy.getmX()+enemy.getmWidth()/2, 
-							enemy.getmX()+enemy.getmHeight()/2, 120, 200);
-					mExplosionList.add(explosion);
-					//폭발음효과
-					mAppDirector.playSoundEffect(AppDirector.SOUND_EXPLOSION);
+					addExplosion(enemy);
 					break;
 				}
 			}
 		}
+		
+		//적군과 아군 충돌 체크
+		for(Enemy enemy : mEnemyList) {
+			if(checkBoxToBox(enemy, mPlayer)) {
+				enemy.setmIsDead(true);
+				mPlayer.setmIsDead(true);
+				mPlayer.getDstRect().set(0,0,0,0); //invisible 처리
+				//터치제어는 onTouchEvent에서
+				//폭발처리
+				addExplosion(mPlayer);
+				//게임 종료 처리
+				mState = STATE_OVER;
+			}
+		}
+		
+		//적군미사일과 아군 충돌체크
+		for(Missile enemyMissile : mEnemyMissileList) {
+			if(checkBoxToBox(enemyMissile, mPlayer)) {
+				enemyMissile.setmIsDead(true);
+				mPlayer.setmIsDead(true);
+				mPlayer.getDstRect().set(0,0,0,0); //invisible 처리
+				//터치제어는 onTouchEvent에서
+				//폭발처리
+				addExplosion(mPlayer);
+				//게임 종료 처리
+				mState = STATE_OVER;
+			}
+		}
+	}
+
+	private void addExplosion(Sprite s) {
+		//폭발효과 처리
+		Explosion explosion = new Explosion(mAppDirector.explosion_bitmap);
+		explosion.init(6, 100, 66, 104, 3);
+		explosion.setPosition(s.getmX()+s.getmWidth()/2, 
+				s.getmX()+s.getmHeight()/2, 120, 200);
+		mExplosionList.add(explosion);
+		//폭발음효과
+		if(mAppDirector.getSound())
+			mAppDirector.playSoundEffect(AppDirector.SOUND_EXPLOSION);
 	}
 	
 	private boolean checkBoxToBox(Sprite s1, Sprite s2) {

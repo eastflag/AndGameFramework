@@ -41,7 +41,19 @@ public class GameView extends SurfaceView implements Callback{
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		//2. 애니메이션 작가에게 일을 시켜야 됨.
-		mRenderingThread.start();
+		mRenderingThread.setRunning(true);
+		//pause => resume 상태면 thread를 재시작
+		//create =>resume thread 시작
+		try {
+			if(mRenderingThread.getState() == Thread.State.TERMINATED) {
+				mRenderingThread = new RenderingThread(this, getHolder());
+				mRenderingThread.start();
+			} else {
+				mRenderingThread.start();
+			}
+		} catch(IllegalThreadStateException itse) {
+		} catch (Exception e) {
+		}
 	}
 	
 	@Override

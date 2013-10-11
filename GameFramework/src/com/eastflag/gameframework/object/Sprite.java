@@ -9,7 +9,6 @@ public abstract class Sprite {
 	protected int mX, mY; //화면상에 비트맵이 그려질 위치
 	protected int mWidth, mHeight; //화면상에 비트맵의 넓이, 높이
 	protected Rect dstRect; //화면상에 그려지는 영역
-	protected boolean isOn; //현재 선택이 되었느냐
 	protected AppDirector mAppDirector;
 	protected boolean mIsDead;
 	
@@ -34,7 +33,6 @@ public abstract class Sprite {
 			switch(event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
 				result = MotionEvent.ACTION_DOWN;
-				isOn = true;
 				break;
 			case MotionEvent.ACTION_MOVE:
 				result = MotionEvent.ACTION_MOVE;
@@ -42,7 +40,6 @@ public abstract class Sprite {
 			case MotionEvent.ACTION_UP: //FALL_THROUGH
 			case MotionEvent.ACTION_CANCEL:
 				result = MotionEvent.ACTION_UP;
-				isOn = false;
 				break;
 			}
 		} 

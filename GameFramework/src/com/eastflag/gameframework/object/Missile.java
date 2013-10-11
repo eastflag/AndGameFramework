@@ -18,7 +18,7 @@ public class Missile extends SpriteObject{
 		
 		while(localTime >= 10) {
 			mY += speed;
-			if(mY + mHeight < 0) {
+			if(mY + mHeight < 0 || mY >1980) {  //화면을 벗어나는지 체크
 				mIsDead = true;
 				break;
 			}

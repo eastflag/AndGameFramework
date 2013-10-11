@@ -1,11 +1,14 @@
 package com.eastflag.gameframework.object;
 
+import java.util.Random;
+
 import android.graphics.Bitmap;
 
 public class Enemy extends SpriteAnimation{
 	private long localTime;
 	private long localMissileTime;
 	public boolean makeMissile;
+	private int Time_To_Dispaly_Enemy_Missile = 3000;
 	
 	public Enemy(Bitmap bitmap) {
 		super(bitmap);
@@ -29,9 +32,12 @@ public class Enemy extends SpriteAnimation{
 		
 		//3초마다 미사일 생성
 		localMissileTime += mAppDirector.getmDeltaTime();
-		while(localMissileTime >= 3000) {
+		while(localMissileTime >= Time_To_Dispaly_Enemy_Missile) {
 			makeMissile = true;
-			localMissileTime -= 3000;
+			localMissileTime -= Time_To_Dispaly_Enemy_Missile;
+			
+			Random rand = new Random();
+			Time_To_Dispaly_Enemy_Missile = (1 + rand.nextInt(5)) * 1000;
 		}
 	}
 }

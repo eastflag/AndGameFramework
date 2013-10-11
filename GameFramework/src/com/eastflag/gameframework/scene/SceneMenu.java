@@ -18,6 +18,8 @@ public class SceneMenu implements IScene {
 	private TextButton mMenuShoot;
 	private TextButton mMenuBoard;
 	
+	private ImageButton btnBgm, btnSound;
+	
 	private SpriteObject missile;
 	
 	public SceneMenu() {
@@ -28,12 +30,15 @@ public class SceneMenu implements IScene {
 		mMenuShoot.setPosition(540, 600, 700, 100);
 		mMenuBoard = new TextButton("Board");
 		mMenuBoard.setPosition(540, 1200, 700, 100);
-		//mMenuNew = new ImageButton(mAppDirector.menuNew, mAppDirector.menuNewOn);
-		//mMenuNew.setPostion(200, 400);
-		//mMenuNew.setPosition(AppDirector.getInstance().mVirtualWidth/2, 500, 800, 200);
-	
-		//missile = new SpriteObject(AppDirector.getInstance().missile);
-		//missile.setPosition(540, 540, 100, 100);
+		
+		//Bgm, Sound
+		btnBgm = new ImageButton(mAppDirector.bgmOn, mAppDirector.bgmOff);
+		btnBgm.setPosition(100, 1800, 128, 128);
+		btnBgm.isClicked = mAppDirector.getBGM() == true? false : true;
+		
+		btnSound = new ImageButton(mAppDirector.soundOn, mAppDirector.soundOff);
+		btnSound.setPosition(250, 1800, 128, 128);
+		
 	}
 
 	@Override
@@ -48,6 +53,9 @@ public class SceneMenu implements IScene {
 		//mMenuNew.present(canvas);
 		mMenuShoot.present(canvas);
 		mMenuBoard.present(canvas);
+		
+		btnBgm.present(canvas);
+		btnSound.present(canvas);
 	}
 
 	@Override
@@ -57,13 +65,52 @@ public class SceneMenu implements IScene {
 		//버튼 클릭 유무 체크
 		//버튼 클릭이 된거면, down이벤트시 해당 버튼의 bitmap을 바꾸고, up 이벤트에서 원복
 		
-		if(mMenuShoot.isSelected(event) == MotionEvent.ACTION_UP) {
-			AppDirector.getInstance().getmGameView().changeScene(new SceneShoot());
+		switch(event.getAction()) {
+		case MotionEvent.ACTION_DOWN:
+			if(mMenuShoot.isSelected(event) == MotionEvent.ACTION_DOWN) {
+				mMenuShoot.isClicked = true;
+			}
+			if(mMenuBoard.isSelected(event) == MotionEvent.ACTION_DOWN	) {
+				mMenuBoard.isClicked = true;
+			}
+			if(btnBgm.isSelected(event) == MotionEvent.ACTION_DOWN) {
+				if(btnBgm.isClicked) {
+					mAppDirector.setBGM(true);
+					mAppDirector.getmMainActivity().playBGM();
+					btnBgm.isClicked = false;
+				} else {
+					mAppDirector.setBGM(false);
+					mAppDirector.getmMainActivity().pauseBGM();
+					btnBgm.isClicked = true;
+				}
+			}
+			if(btnSound.isSelected(event) == MotionEvent.ACTION_DOWN) {
+				if(btnSound.isClicked) {
+					mAppDirector.setSound(true);
+					btnSound.isClicked = false;
+				} else {
+					mAppDirector.setSound(false);
+					btnSound.isClicked = true;
+				}
+			}
+			break;
+		case MotionEvent.ACTION_UP:
+		case MotionEvent.ACTION_CANCEL:
+			//다운이 버튼에서 일어난후 move로 버튼을 벗어날시 처리
+			mMenuShoot.isClicked = false;
+			mMenuBoard.isClicked = false;
+			
+			if(mMenuShoot.isSelected(event) == MotionEvent.ACTION_UP) {
+				AppDirector.getInstance().getmGameView().changeScene(new SceneShoot());
+			}
+			
+			if(mMenuBoard.isSelected(event) == MotionEvent.ACTION_UP) {
+				AppDirector.getInstance().getmGameView().changeScene(new SceneBoard());
+			}
+			break;
 		}
 		
-		if(mMenuBoard.isSelected(event) == MotionEvent.ACTION_UP) {
-			AppDirector.getInstance().getmGameView().changeScene(new SceneBoard());
-		}
+
 
 	}
 

@@ -3,6 +3,7 @@ package com.eastflag.gameframework;
 import java.io.IOException;
 import java.util.HashMap;
 
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,6 +33,8 @@ public class AppDirector {
 	//Bitmap
 	//public Bitmap menuNew, menuNewOn; // new game 메뉴
 	public Bitmap backGround, backCloud; //백그라운드
+	public Bitmap bgmOn, bgmOff, soundOn, soundOff;
+	
 	public Bitmap player;;
 	public Bitmap missile; //아군 미사일
 	public Bitmap enemy_missile; //적군 미사일
@@ -80,6 +83,12 @@ public class AppDirector {
 		try {
 			backGround = BitmapFactory.decodeStream(am.open("background2.jpg"));
 			backCloud = BitmapFactory.decodeStream(am.open("background_2.png"));
+			
+			bgmOn = BitmapFactory.decodeStream(am.open("bgm.png"));
+			bgmOff = BitmapFactory.decodeStream(am.open("bgm_mute.png"));
+			soundOn = BitmapFactory.decodeStream(am.open("effect.png"));
+			soundOff = BitmapFactory.decodeStream(am.open("effect_mute.png"));
+			
 //			menuNew = BitmapFactory.decodeStream(am.open("btn00.png"));
 //			menuNewOn =  BitmapFactory.decodeStream(am.open("btn01.png"));
 			player =  BitmapFactory.decodeStream(am.open("player.png"));
@@ -125,6 +134,36 @@ public class AppDirector {
 		Log.d("ldk", "mWidth:" + mWidth + "mHeight:" + mHeight );
 		Log.d("ldk", "변환된 x:" + e.getX() + "y:" + e.getY());
 		return e;
+	}
+	
+	public void setBGM(boolean bgm	) {
+		SharedPreferences pref = mMainActivity.getSharedPreferences("GameConfig",0);
+		SharedPreferences.Editor edit = pref.edit();
+
+		edit.putBoolean("BGM", bgm);
+
+		edit.commit();
+	}
+	
+	public boolean getSound() {
+		SharedPreferences pref = mMainActivity.getSharedPreferences("GameConfig",0);
+		boolean bgm = pref.getBoolean("Sound", true);
+		return bgm;
+	}
+	
+	public void setSound(boolean sound) {
+		SharedPreferences pref = mMainActivity.getSharedPreferences("GameConfig",0);
+		SharedPreferences.Editor edit = pref.edit();
+
+		edit.putBoolean("Sound", sound);
+
+		edit.commit();
+	}
+	
+	public boolean getBGM() {
+		SharedPreferences pref = mMainActivity.getSharedPreferences("GameConfig",0);
+		boolean bgm = pref.getBoolean("BGM", true);
+		return bgm;
 	}
 	
 	private long mDeltaTime;

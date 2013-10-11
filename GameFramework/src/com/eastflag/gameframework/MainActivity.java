@@ -5,7 +5,10 @@ import java.io.IOException;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Canvas;
@@ -22,7 +25,7 @@ public class MainActivity extends Activity {
 	
 	//public static MainActivity mMainActivity;
 	public int a = 1;
-	AppDirector mAppDirector;
+	AppDirector mAppDirector = AppDirector.getInstance();
 	
 	private MediaPlayer mMediaPlayer;
 
@@ -70,7 +73,9 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onResume() {
-		playBGM();
+		if(mAppDirector.getBGM()) {
+			playBGM();
+		}
 		super.onResume();
 	}
 
@@ -124,11 +129,30 @@ public class MainActivity extends Activity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if(keyCode == KeyEvent.KEYCODE_BACK) {
 			//다이얼로그 생성 (Builder패턴으로)
+			finishApp();
 		}
 		return super.onKeyDown(keyCode, event);
 	}
 	
-	
+	private  void finishApp() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Game Over")
+			.setMessage("게임을 정말로 종료하시겠습니까?")
+			.setPositiveButton("OK", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// 종료처리
+					finish();
+				}
+			})
+			.setNegativeButton("Cancle", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					return;
+				}
+			})
+			.show();
+	}
 
 }
 

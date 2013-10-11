@@ -2,11 +2,14 @@ package com.eastflag.gameframework.object;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.CornerPathEffect;
+import android.graphics.EmbossMaskFilter;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 
 public class TextButton extends Sprite {
 	
+	public boolean isClicked;
 	private String mTitle; // 제목글자
 	private Paint backgroundPaint;  //백그라운드 색깔
 	private Paint backgroundOnPaint; //클릭시 백그라운드 색깔
@@ -23,6 +26,13 @@ public class TextButton extends Sprite {
 		fontPaint.setColor(Color.WHITE);
 		fontPaint.setTextSize(80); //mHeight * 0.5
 		fontPaint.setTextAlign(Align.CENTER);
+		
+		EmbossMaskFilter emboss = new EmbossMaskFilter(
+				new float[] { 2, 2, 2 }, 0.5f, 8, 6);
+		backgroundPaint.setMaskFilter(emboss);
+		backgroundPaint.setPathEffect(new CornerPathEffect(30));
+		backgroundOnPaint.setMaskFilter(emboss);
+		backgroundOnPaint.setPathEffect(new CornerPathEffect(30));
 	}
 	
 	//초기화 함수 :  옵션요소 초기화
@@ -32,7 +42,7 @@ public class TextButton extends Sprite {
 	
 	public void present(Canvas canvas) {
 		//1) 사각형 그리기
-		if(isOn) {
+		if(isClicked) {
 			canvas.drawRect(dstRect, backgroundOnPaint);
 		} else {
 			canvas.drawRect(dstRect, backgroundPaint);

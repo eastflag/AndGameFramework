@@ -2,36 +2,28 @@ package com.eastflag.gameframework.object;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.view.MotionEvent;
 
 public class ImageButton extends Sprite {
 
-	private Bitmap mBitmap, mBitmapOn;
+	public boolean isClicked;
+	private Bitmap mBitmapOn, mBitmapOff;
+	private Rect srcRect;
 	
-	public ImageButton(Bitmap bitmap, Bitmap bitmapOn) {
-		mBitmap = bitmap;
+	public ImageButton(Bitmap bitmapOn, Bitmap bitmapOff) {
 		mBitmapOn = bitmapOn;
-	}
-	
-	//setPositon
-	public void setPostion(int x, int y) {
-		mX = x;
-		mY = y;
-	}
-	
-	public void setPosition(int centerX, int centerY, int width, int height) {
-		super.setPosition(centerX, centerY, width, height);
+		mBitmapOff = bitmapOff;
 		
-		mBitmap =  Bitmap.createScaledBitmap(mBitmap, width, height, false);
-	}
-	
-	//Bitmap 변경
-	public void toggleButton() {
-		
+		srcRect = new Rect(0, 0, mBitmapOn.getWidth(), mBitmapOn.getHeight());
 	}
 	
 	//present
 	public void present(Canvas canvas) {
-		canvas.drawBitmap(mBitmap, mX, mY, null);
+		if(isClicked) {
+			canvas.drawBitmap(mBitmapOff, srcRect, dstRect, null);
+		} else {
+			canvas.drawBitmap(mBitmapOn, srcRect, dstRect, null);
+		}
 	}
 }

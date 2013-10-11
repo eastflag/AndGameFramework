@@ -9,7 +9,6 @@ import android.graphics.Rect;
 public class SpriteAnimation extends Sprite {
 	private Bitmap mBitmap;
 	private Rect srcRect; //비트맵상의 위치
-	protected Rect dstRect; //화면상에 그려질 위치
 	
 	private int frameCount; // 프레임 갯수
 	private int frameTime; // 한 프레임이 보여지는 시간
@@ -22,13 +21,12 @@ public class SpriteAnimation extends Sprite {
 	public SpriteAnimation(Bitmap bitmap) {
 		mBitmap = bitmap;
 		srcRect = new Rect(0,0,0,0);
-		dstRect = new Rect(0,0,0,0);
 	}
 	
-	public void setPosition(int centerX, int centerY, int width, int height) {
-		super.setPosition(centerX, centerY, width, height);
-		dstRect.set(mX, mY, mX+mWidth, mY+mHeight);
-	}
+//	public void setPosition(int centerX, int centerY, int width, int height) {
+//		super.setPosition(centerX, centerY, width, height);
+//		dstRect.set(mX, mY, mX+mWidth, mY+mHeight);
+//	}
 	
 	//init 함수에서 스프라이트 초기화
 	public void init(int frameCount, int frameTime, int width, int height, int  isRepeat) {
