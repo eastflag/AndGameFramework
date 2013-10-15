@@ -131,10 +131,16 @@ public class AppDirector {
 	public MotionEvent convertEvent(MotionEvent event) {
 		MotionEvent e = MotionEvent.obtain(event);
 		//변환된 x, y = 작업공간/디바이스*event
-		e.setLocation((float)mVirtualWidth/mWidth*event.getX(), 
-				(float)mVirtualHeight/mHeight*event.getY());
+
 		Log.d("ldk", "mWidth:" + mWidth + "mHeight:" + mHeight );
 		Log.d("ldk", "변환된 x:" + e.getX() + "y:" + e.getY());
+		if(event.getPointerCount() > 1) {
+			e.setLocation((float)mVirtualWidth/mWidth*event.getX(1), 
+					(float)mVirtualHeight/mHeight*event.getY(1));
+		} else {
+			e.setLocation((float)mVirtualWidth/mWidth*event.getX(), 
+					(float)mVirtualHeight/mHeight*event.getY());
+		}
 		return e;
 	}
 	

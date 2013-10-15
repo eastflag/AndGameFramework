@@ -2,6 +2,9 @@ package com.eastflag.gameframework;
 
 import java.io.IOException;
 
+import com.eastflag.gameframework.scene.SceneMenu;
+import com.eastflag.gameframework.scene.SceneShoot;
+
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.app.Activity;
@@ -149,6 +152,27 @@ public class MainActivity extends Activity {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					return;
+				}
+			})
+			.show();
+	}
+	
+	public  void retryGame() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Retry Game")
+			.setMessage("게임을 다시 하시겠습니까?")
+			.setPositiveButton("OK", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// 재시작
+					AppDirector.getInstance().getmGameView().changeScene(new SceneShoot());
+				}
+			})
+			.setNegativeButton("Cancle", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					//메뉴화면으로 이동
+					AppDirector.getInstance().getmGameView().changeScene(new SceneMenu());
 				}
 			})
 			.show();

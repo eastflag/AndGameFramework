@@ -22,5 +22,9 @@ public class TextObject extends Sprite{
 	public void present(Canvas canvas) {
 		canvas.drawText(title, mX+mWidth/2, mY+mHeight/2+(fontSize*0.4f), fontPaint);
 	}
+	
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
 }

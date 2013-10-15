@@ -3,6 +3,7 @@ package com.eastflag.gameframework.object;
 import com.eastflag.gameframework.AppDirector;
 
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.MotionEvent;
 
 public abstract class Sprite {
@@ -27,10 +28,13 @@ public abstract class Sprite {
 	
 	//버튼 체크 유무 
 	public int isSelected(MotionEvent event) {
+		int action = event.getAction();
 		int result = -1;
-		if (event.getX() > mX && event.getX() < mX + mWidth && 
-				event.getY() > mY && event.getY() < mY + mHeight) {
-			switch(event.getAction()) {
+//		if (event.getX() > mX && event.getX() < mX + mWidth && 
+//				event.getY() > mY && event.getY() < mY + mHeight) {
+		if(dstRect.contains((int)(event.getX()), (int)(event.getY())))  {
+			Log.d("ldk", "Sprite is Selected");
+			switch(action & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
 				result = MotionEvent.ACTION_DOWN;
 				break;
@@ -40,6 +44,9 @@ public abstract class Sprite {
 			case MotionEvent.ACTION_UP: //FALL_THROUGH
 			case MotionEvent.ACTION_CANCEL:
 				result = MotionEvent.ACTION_UP;
+				break;
+			case MotionEvent.ACTION_POINTER_DOWN:
+				result = MotionEvent.ACTION_POINTER_DOWN;
 				break;
 			}
 		} 

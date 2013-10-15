@@ -47,6 +47,11 @@ public class SceneShoot implements IScene{
 	
 	private TextObject mGameOver;
 	
+	private Paint hudPaint;
+	
+	private int mScore;
+	private TextObject mTextScore;
+	
 	public SceneShoot() {
 		mAppDirector = AppDirector.getInstance();
 		//페인트 색 정의
@@ -75,10 +80,20 @@ public class SceneShoot implements IScene{
 		leftKeypad = new SpriteObject(mAppDirector.leftTriangle);
 		leftKeypad.setPosition(50, 1770, 100, 100);
 		tapKeypad = new SpriteObject(mAppDirector.circle);
-		tapKeypad.setPosition(150, 1770, 100, 100);
+		tapKeypad.setPosition(1000, 1770, 100, 100);
 		
 		mGameOver = new TextObject("Game Over", Color.YELLOW, 200);
 		mGameOver.setPosition(1080/2, 1980/2, 0, 0);
+		
+		//hud 초기화
+		hudPaint = new Paint();
+		hudPaint.setColor(Color.BLACK);
+		hudPaint.setAlpha(150); //255는 불투명, 0은 투명
+		
+		//스코어 객체 초기화
+		mTextScore = new TextObject(String.format("SCORE: %5d", mScore), 
+				Color.WHITE, 80);
+		mTextScore.setPosition(250, 80, 0, 0); //Text는 width, height 사용하지 않음
 	}
 
 	@Override
@@ -183,6 +198,10 @@ public class SceneShoot implements IScene{
 			explosion.present(canvas);
 		}
 		
+		//HUD 영역
+		canvas.drawRect(0, 0, 1080, 150, hudPaint);
+		mTextScore.present(canvas);
+		
 		if(mState == STATE_OVER) {
 			mGameOver.present(canvas);
 		}
@@ -190,10 +209,11 @@ public class SceneShoot implements IScene{
 
 	@Override
 	public void onTouchEvent(MotionEvent event) {
+		int action = event.getAction();
 		if(mState == STATE_OVER) 
 			return;
 		//키패드 제어 : 해당 키가 클릭되었는지를 체크하여 제어
-		switch(event.getAction()) {
+		switch(action & MotionEvent.ACTION_MASK) {
 		case MotionEvent.ACTION_DOWN:
 			if(upKeypad.isSelected(event) == MotionEvent.ACTION_DOWN) {
 				Log.d("ldk", "upKeypad is clicked");
@@ -223,7 +243,21 @@ public class SceneShoot implements IScene{
 		case MotionEvent.ACTION_UP:
 			mPlayer.stopMoving();
 			break;
+		case MotionEvent.ACTION_POINTER_DOWN:
+			Log.d("ldk", "event.getX():" + event.getX());
+			Log.d("ldk", "event.getY():" + event.getY());
+			Log.d("ldk", "event.getX(1):" + event.getX(1));
+			Log.d("ldk", "event.getY(1):" + event.getY(1));
+			if(tapKeypad.isSelected(event) == MotionEvent.ACTION_POINTER_DOWN) {
+				Missile missile = new Missile(mAppDirector.missile, -3); //10ms에 위로 3px
+				missile.setPosition(mPlayer.getmX() + mPlayer.getmWidth()/2, mPlayer.getmY(), 45, 45);
+				mMissileList.add(missile);
+				if(mAppDirector.getSound())
+					mAppDirector.playSoundEffect(AppDirector.SOUND_MY_MISSILE);
+			}
+			break;
 		}
+		
 	}
 
 	private void addEnemy() {
@@ -257,6 +291,9 @@ public class SceneShoot implements IScene{
 					enemy.setmIsDead(true);
 					//폭발효과 처리
 					addExplosion(enemy);
+					//스코어 처리
+					mScore += 100;
+					mTextScore.setTitle(String.format("SCORE: %5d", mScore));
 					break;
 				}
 			}
@@ -273,6 +310,7 @@ public class SceneShoot implements IScene{
 				addExplosion(mPlayer);
 				//게임 종료 처리
 				mState = STATE_OVER;
+				showRetryDialog();
 			}
 		}
 		
@@ -287,6 +325,7 @@ public class SceneShoot implements IScene{
 				addExplosion(mPlayer);
 				//게임 종료 처리
 				mState = STATE_OVER;
+				showRetryDialog();
 			}
 		}
 	}
@@ -309,5 +348,10 @@ public class SceneShoot implements IScene{
 		} else {
 			return false;
 		}
+	}
+	
+	private void showRetryDialog() {
+		//쓰레드는 메인 UI 작업을 해서는 안된다.
+		mAppDirector.getmMainActivity().retryGame();
 	}
 }
