@@ -2,6 +2,7 @@ package com.eastflag.gameframework;
 
 import java.io.IOException;
 
+import com.eastflag.gameframework.scene.IScene;
 import com.eastflag.gameframework.scene.SceneMenu;
 import com.eastflag.gameframework.scene.SceneShoot;
 
@@ -31,6 +32,8 @@ public class MainActivity extends Activity {
 	AppDirector mAppDirector = AppDirector.getInstance();
 	
 	private MediaPlayer mMediaPlayer;
+	
+	private AlertDialog.Builder builder;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -132,13 +135,23 @@ public class MainActivity extends Activity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if(keyCode == KeyEvent.KEYCODE_BACK) {
 			//다이얼로그 생성 (Builder패턴으로)
-			finishApp();
+
+			IScene scene = mAppDirector.getmGameView().mIScene;
+			
+			if(scene instanceof SceneMenu) {
+				finishApp();
+			}
+			if(scene instanceof SceneShoot) {
+				goMenu();
+			}
 		}
 		return super.onKeyDown(keyCode, event);
 	}
 	
 	private  void finishApp() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		dismissDialog();
+		
+		builder = new AlertDialog.Builder(this);
 		builder.setTitle("Game Over")
 			.setMessage("게임을 정말로 종료하시겠습니까?")
 			.setPositiveButton("OK", new OnClickListener() {
@@ -158,7 +171,12 @@ public class MainActivity extends Activity {
 	}
 	
 	public  void retryGame() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//		if(builder != null && builder.create().isShowing()) {
+//			return;
+//		}
+		dismissDialog();
+		
+		builder = new AlertDialog.Builder(this);
 		builder.setTitle("Retry Game")
 			.setMessage("게임을 다시 하시겠습니까?")
 			.setPositiveButton("OK", new OnClickListener() {
@@ -176,6 +194,34 @@ public class MainActivity extends Activity {
 				}
 			})
 			.show();
+
+	}
+	
+	private void goMenu() {
+		dismissDialog();
+		
+		builder = new AlertDialog.Builder(this);
+		builder.setTitle("Go Menu")
+			.setMessage("메뉴 화면으로 돌아가시겠습니까?")
+						.setNegativeButton("Cancle", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+				}
+			})
+			.setPositiveButton("OK", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// 메뉴화면
+					AppDirector.getInstance().getmGameView().changeScene(new SceneMenu());
+				}
+			})
+			.show();
+	}
+	
+	private void dismissDialog() {
+		if(builder != null && builder.create().isShowing()) {
+			builder.create().dismiss();
+		}
 	}
 
 }

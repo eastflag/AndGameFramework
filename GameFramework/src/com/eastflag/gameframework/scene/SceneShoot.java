@@ -20,6 +20,8 @@ import com.eastflag.gameframework.object.Timer;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewDebug.ExportedProperty;
@@ -335,7 +337,7 @@ public class SceneShoot implements IScene{
 		Explosion explosion = new Explosion(mAppDirector.explosion_bitmap);
 		explosion.init(6, 100, 66, 104, 3);
 		explosion.setPosition(s.getmX()+s.getmWidth()/2, 
-				s.getmX()+s.getmHeight()/2, 120, 200);
+				s.getmY()+s.getmHeight()/2, 120, 200);
 		mExplosionList.add(explosion);
 		//폭발음효과
 		if(mAppDirector.getSound())
@@ -352,6 +354,13 @@ public class SceneShoot implements IScene{
 	
 	private void showRetryDialog() {
 		//쓰레드는 메인 UI 작업을 해서는 안된다.
-		mAppDirector.getmMainActivity().retryGame();
+		Handler mHandler = new Handler(Looper.getMainLooper());
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				mAppDirector.getmMainActivity().retryGame();
+			}
+		});
+		
 	}
 }

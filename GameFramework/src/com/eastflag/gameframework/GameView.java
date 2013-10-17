@@ -20,7 +20,7 @@ public class GameView extends SurfaceView implements Callback{
 	Paint mPaint;
 	
 	//씬 정의
-	private IScene mIScene;
+	public IScene mIScene;
 
 	public GameView(Context context) {
 		super(context);
